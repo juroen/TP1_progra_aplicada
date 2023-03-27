@@ -5,262 +5,488 @@ Creador: Juan Rodolfo Enrique Alarcon Alpa
 
 class Myarray1():
     
-    def __init__(self,lista,r,c,by_row):
+    def __init__ ( self , lista , r , c , by_row ) : 
+        """
+        Metodo Creador de instancia de la Myarray1, cada instancia es una matriz escrita de esta manera
+
+        La lista solo puede ser lista sin otras listas adentro solo int o float, /// tipo list///
+        La lista contiene todos los elementos de la matriz
+
+
+        r cantidad de filas de la matriz  /// tipo int///
+
+        c cantida de columnas de la matriz  /// tipo int///
+
+        by_row  indica de que manera esta creada la lista: /// tipo bool///
         
-        self.lista= lista   
-        self.r=r  # r = a la cantidad de filas
-        self.c=c   # c = a la cantidad de columnas 
-        self.by_row = by_row  # indica si la matriz fue cargada en orden columnas por columna False o fila por fila True
+        Si va en un sentido horizontal,  linea por linea de la matriz en True
+
+        Si va en un sentido vertical, columna por columna de la matriz es False        
+
+
+        """
+
+        if type(r) == int and type(c) == int and type(by_row) == bool:
+            
+        
+            #aca se corrobora que los parametros de entrada del metodo sean los requeridos para crear la instancia
+            sigue = True
+            for x in lista:
+                # Corroboro que todos los elementos de lista sean los requeridos
+                if type(x) != float:
+                    if type(x) != int:
+                        sigue  =  False
+                if sigue:
+                    self.lista  = lista   
+                    self.r  = r  
+                    self.c  = c   
+                    self.by_row = by_row  
+        else:
+            print ('CREANDO UNA INSTANCIA NO VALIDA')
+    
+    """
+        YA QUE CADA INSTANCIA CREADA TIENE DOS FORMAS DE ESTAR EXPRESADA SIENDO LA MISMA.
+
+        A PARTIR DE ESTE PUNTO LA MAYORIA DE LOS METODOS TIENEN UNA FORMA DE FUNCIONAR
+
+        DEPENDIENDO DEL TIPO DE MATRIZ QUE SE LE ENVIE PARA USAR
+
+        a partir de esto entre en un trade off:
+         
+        por ejemplo uno era:
+         
+             agregar mas lineas de codigo y reducir la cantidad de returns o reducir las lineas y usar dos returns
+
+             entre otros. 
+
+        Dependiendo del caso tome diferentes decisiones acorde el metodo y el contexto competente
+    
+    """
+
+
+    def get_pos ( self , j , k ):
+        """
+        Este metodo toma las coordenadas
+        
+        j   = Fila   /// tipo int///  desde 1 hasta la cantidad de filas n EXCLUSIVAMENTE
+
+        k   = Columna  /// tipo int///    desde 1 hasta la cantidad de columnas n EXCLUSIVAMENTE
+        
+        en la matriz y devuelve la posicion m asociada en la lista elems
+        
+        en caso de poner valores fuera de los limites el metodo no funciona
+         
+        en este caso tomo que 
+
+        m tiene valores entre    0  y   n = len(lista)-1
+
+        """
+        if 0 < j  <= self.r   and    0 < k  <=  self.c :
+            if self . by_row:
+                return ( j - 1 ) * self.c +  ( k - 1 )
+            else:
+                return ( k - 1 ) * self.r + ( j - 1 )
+        else:
+            print('VALORES FUERA DE LA MATRIZ')
+
+    def get_coords ( self , m ) :
+        """
+        toma una posicion m en la lista y devuelve en forma de tupla las
+        
+        coordenadas j (filas),k(columnas) correspondientes en la matriz.
+
+        en este caso tomo que 
+
+        m /// tipo int ///tiene valores entre    0  y   n = len(lista)-1 EXCLUSIVAMENTE
+
+        """
+        if 0 < m < len ( self . lista ):
+            if self . by_row:
+                j = m // self.c + 1
+                k = m % self.c + 1
+                return ( j , k )
+            else: 
+                k = m // self.r + 1
+                j = m % self.r + 1
+                return ( j , k )
+        else:
+            print('Valor fuera del rango')
+    
+    def switch ( self ) :
+        """
+        Es un metodo que devuelve un objeto con la misma matriz, pero
+        alterando la lista elems y cambiando el valor de verdad de by_row.
+        
+        En esta caso me vi obligado a utilizar dos returns
+        
+        """
+        if self . by_row:
+            new = []
+            for line in range ( self . c ):
+                for value in range ( line , len ( self . lista ), self.c ):
+                    new . append ( self. lista [value] )
+            return Myarray1( new , self.r , self.c , False )
+        
+        elif self . by_row == False:
+            new = []
+            for line in range ( self.r ):
+                for value in range ( line , len ( self. lista ) , self.r ):
+                    new . append ( self . lista [value] )            
+            return Myarray1 ( new , self.r , self.c , True )
+    
+
+    def get_row (self , j_ ):
+        """
+        Este metodo retorno el valor de una/s fila/s de la matriz seleccionada con el/los valor/es j de entrada
+        
+        j_: puede ser de tipo:
+                    ///int o list/// EXCLUSIVAMENTE                 
+                
+        En caso que algun valor de j no se encuentre en el rando adecuado a la matrix 
+        se muestra un error en el valor
+
+        Siempre devuelve una lista de lista ya que esta preparada para devolver varias listas que serian varias filas
+        
+        """
+        if type ( j_ ) == int:
+            j = list ( j_ )
+                
+        if type ( j_ )  == list :
+            seguir = True
+            j= j_.copy()
+            for entradas  in  j:
+                if type ( entradas ) != int:
+                    seguir = False
+                if entradas <= 0 or entradas >  self.r :
+                    seguir = False
+            if seguir :                    
+                nuevo, coco= self.cambio_inicial(True)  
+                total = []
+                for letra in j:
+                    ram = []
+                    for i in range (letra-1 ,  len(self.lista) , self.c ):
+                        ram . append ( nuevo . lista [i]  )
+                    total . append(ram)
+                print(total)
+                return total
+            if seguir == False:
+                print ('VALORES FUERA DEL RANGO ESTABLECIDO')
+        else:
+            print ('VALORES FUERA DEL RANGO ESTABLECIDO')
+   
+    def get_col ( self , k_):
+        """
+        Este metodo retorno el valor de una/s cloumnas/s de la matriz seleccionada con el/los valor/es k de entrada
+
+        k_: puede ser de tipo:
+                    ///int o list/// EXCLUSIVAMENTE   
+
+        En caso que algun valor de k no se encuentre en el rando adecuado a la matrix 
+        se muestra un error en el valor
+
+        Siempre devuelve una lista de lista ya que esta preparada para devolver varias listas que serian varias columnas
+        
+        """
+        if type ( k_ ) == int:
+            k = list ( k_ )
+        
+        if type ( k_ )  == list :
+            seguir = True
+            k = k_.copy()
+            for entradas  in  k:
+                if type ( entradas ) != int:
+                    seguir = False
+                if entradas <= 0 or entradas >  self.c :
+                    seguir = False
+            if seguir : 
+                nuevo, coco= self.cambio_inicial(False)  
+                total = []
+                for letra in k:
+                    ram = []
+                    for i in range (letra-1,len(nuevo.lista),nuevo.r):
+                        ram . append ( nuevo . lista [i]  )
+                    total . append(ram)
+                print(total)
+                return total
+            if seguir == False:
+                print ('VALORES FUERA DEL RANGO ESTABLECIDO')
+        else:
+            print ('VALORES FUERA DEL RANGO ESTABLECIDO')
       
-    def get_pos(self,j,k):
-        if self.by_row:
-            return (j-1)*self.c+(k-1)
-        else:
-            return (k -1)*self.r+(j -1)
 
-    def get_coords(self,m):
-        if self.by_row:
-
-            j = m//self.c+1
-            k = m%self.c+1
-            print ('fila: ', j,'columna: ', k)
-            x= (j,k)
-            return x
-        else: 
-            k = m//self.r+1
-            j = m%self.r+1
-            print ('fila: ', j,'columna: ', k)
-            x= (j,k)
-            return x
-
-    def switch(self) :
-        if self.by_row:
-            contador=0
-            columna=1
-            ram=[]
-            for i in range (0,self.c):
-                fila=1
-                for f in range(i,len(self.lista),self.c):
-                    ram.append(self.lista[self.get_pos(fila,columna)])
-                    contador+=1 
-                    fila+=1
-                columna+=1
-            self.lista= ram        
-            #print(self.lista)
-            self.by_row = False
-            return self
-        else:
-            contador=0
-            fila=1
-            ram=[]
-            for i in range (0,self.r):
-                columna=1
-                for f in range(i,len(self.lista),self.r):
-                    ram.append(self.lista[self.get_pos(fila,columna)])
-                    contador+=1 
-                    columna+=1
-                fila+=1  
-            self.lista= ram        
-            #print(self.lista)
-            self.by_row = True
-            return self
-    
-    def get_row(self, j):
-        if self.by_row:
-            
-            ram=[]
-            for i in range (j-1,len(self.lista),self.c):
-                ram.append(self.lista[i])
-                
-            print(ram)
-            return ram
-        else:
-            ram=[]
-            for i in range ((self.r*(j-1)),(self.r*(j-1))+self.r):
-                ram.append(self.lista[i])
-            print(ram)
-            return ram
-    
-    def get_col(self, k):
-        if self.by_row:
-            
-            ram=[]
-            for i in range ((self.c*(k-1)),(self.c*(k-1))+self.c):
-            
-                ram.append(self.lista[i])
-                
-            print(ram)
-            return ram
-        else:
-            ram=[]
-            for i in range (k-1,len(self.lista),self.r):
-                ram.append(self.lista[i])
-            print(ram)
-            return ram
-
-    def get_elem(self, j,k):
+    def get_elem ( self , j , k ):
         
-        if self.by_row:
-            fila =1
-            for i in range (k-1,len(self.lista),self.c):
-                if fila == j:
+        """
+        Este metodo toma las coordenadas
+        
+        j   = Fila   /// tipo int///  desde 1 hasta la cantidad de filas n EXCLUSIVAMENTE
 
-                    print (f'Elemento: {self.lista[i]}')    
-                    return self.lista[i]
-                fila+=1
+        k   = Columna   /// tipo int///   desde 1 hasta la cantidad de columnas n EXCLUSIVAMENTE
+        
+        en la matriz y devuelve el elemnto en la posicion solicitada de la matriz
+        
+        en caso de poner valores fuera de los limites el metodo no funciona
+         
+
+        """
+        if type (j) == int and type (k) == int:
+            if  0 < j  <= self.r   and    0 < k  <=  self.c :
+                return self . lista [ self . get_pos (j , k) ]
+
         else:
-            columna =1
-            for i in range (j-1,len(self.lista),self.r):
-                if columna == k:
-
-                    print (f'Elemento: {self.lista[i]}')    
-                    return self.lista[i]
-                columna+=1
-
-    def del_row( self, j):
-        if self.by_row == False:            
-            new= self.switch().lista
+            print('VALORES FUERA DE LA MATRIZ')
+    
+    def cambio_inicial ( self, okay ):
+        """
+        posible funcion  a usar
+        """
+        if self.by_row == okay:            
+            nuevo= self.switch()
             cambiar = True
         else:   
-            new = self.lista.copy()  
+            nuevo = self.co_py()  
             cambiar=False
+        return nuevo,cambiar
 
 
-
-        for X in range( (j-1)* self.c + self.c -1 ,(j-1)*self.c -1 , -1):
-            new.pop(X)
+    def del_row ( self , j_):
+        """
+        Este metodo retorno una matriz seleccionada eliminando la fila con el valor j de entrada
         
-        self.lista = new
-        self.r = self.r-1
+        j_: puede ser de tipo:
+                    ///int o list/// EXCLUSIVAMENTE                 
+                
+        En caso que algun valor de j no se encuentre en el rando adecuado a la matrix 
+        se muestra un error en el valor
+
         
-        if cambiar:           
-            #print(self.switch().lista)
-            return self
-        else:                    
-            #print(self.lista)
-            return self
+        """
+        
+        if type ( j_ ) == int:
+            j = [j_]
+            seguir = True    
+        elif type ( j_ )  == list :
+            j= j_.copy()
+            seguir = True
+           
+        for entradas  in  j:            
+            if type ( entradas ) != int:
+                seguir = False
+            if entradas <= 0 or entradas >  self.r:
+                seguir = False
+        if seguir :
+            nuevo, coco= self.cambio_inicial(False)                
+            new= nuevo.lista
+            j.sort(reverse=True)
+            for letra in j:
+                for X in range( (letra-1) * self.c + self.c - 1  ,   (letra-1) * self.c - 1  ,  -1):
+                    new.pop(X)                
+            nuevo.lista = new
+            nuevo.r = nuevo.r-1  
+                         
+            if coco:           
+                nuevo = nuevo.switch()                  
+            return nuevo
+        if seguir == False:
+            print ('VALORES FUERA DEL RANGO ESTABLECIDO')
+        else:
+            print('VALORES FUERA DE LA MATRIZ')
     
-    def del_col(self,k) :
-        if self.by_row:            
-            new= self.switch().lista
-            cambiar = True
-        else:   
-            new = self.lista.copy()  
-            cambiar=False
-       
-        for X in range( (k-1)* self.r + self.r -1 ,(k-1)*self.r -1 , -1):
-            new.pop(X)
+    def del_col(self,k_) :
         
-        self.lista = new
-        self.c = self.c - 1
+        """
+        Este metodo retorno una matriz seleccionada eliminando la fila con el valor j de entrada
         
-        if cambiar:           
-            #print(self.switch().lista)
-            return self
-        else:                    
-            #print(self.lista)
-            return self
+        k_: puede ser de tipo:
+                    ///int o list/// EXCLUSIVAMENTE                 
+                
+        En caso que algun valor de j no se encuentre en el rando adecuado a la matrix 
+        se muestra un error en el valor
+
+        
+        
+        """
+        
+        if type ( k_ ) == int:
+            k = [k_]
+            seguir = True
+                
+        if type ( k_)  == list:
+            seguir = True
+            k= k_.copy()
+        
+        for entradas  in  k:
+            if type ( entradas ) != int:
+                seguir = False
+            if entradas <= 0 or entradas >  self.c:
+                seguir = False
+        if seguir :
+            nuevo, coco= self.cambio_inicial(True)                
+            new= nuevo.lista.copy()
+            k.sort(reverse=True)
+            for letra in k:
+                for X in range( (letra-1) * self.r + self.r - 1  ,   (letra-1) * self.r - 1  ,  -1):
+                    new.pop(X)                
+            nuevo.lista = new
+            nuevo.c = nuevo.c-1  
+            
+            if coco:           
+                nuevo = nuevo.switch() 
+
+            return nuevo
+        if seguir == False:
+            print ('VALORES FUERA DEL RANGO ESTABLECIDO')
+        else:
+             print('VALORES FUERA DE LA MATRIZ')
 
     def swap_rows(self,j,k):
        
-        if j != k:
-            
-            if self.by_row == False:
-                nueva= self.switch()
-                cambiar = True
-            else:   
-                nueva = self.lista.copy()  
-                cambiar=False        
-            
-            mi = min(j,k)
-            ma = max(j,k)
+        """
+       
+        Este metodo retorno una matriz seleccionada intercambiando  la fila j con la fila K que son valores  de entrada
+        
+        j   = Fila  1 /// tipo int///  desde 1 hasta la cantidad de filas n EXCLUSIVAMENTE
 
-            new = nueva.copy()
-            for X in range( (mi-1)*self.c , (mi-1)* self.c + self.c ):
+        k   = fila 2   /// tipo int///   desde 1 hasta la cantidad de filas n EXCLUSIVAMENTE     
+
+        j tiene que si o si ser diferente de k sino muestra un cartel de que no son valores adecuados            
                 
-                Z= new[X]
-                new[X]= new [ X + (ma-mi)* self.c]
-                new[X + (ma-mi)* self.c]= Z
-
-            print(new)
-            if cambiar:
-                return new.switch()
-            else:                    
-                return new 
+        En caso que algun valor de j o k no se encuentre en el rango adecuado de la matrix 
+        se muestra un error en el valor
+       
+        """
+        
+        if type (j) == int and type (k) == int:
+            if  0 < j  <= self.r   and    0 < k  <=  self.r :
+                if j != k:
+                    nuevo, coco= self.cambio_inicial(False)                
+                    new = nuevo.lista.copy()   
+                    mi = min(j,k)
+                    ma = max(j,k)                    
+                    for X in range( (mi-1)*self.c , (mi-1)* self.c + self.c ):                        
+                        Z= new[X]
+                        new[X]= new [ X + (ma-mi)* self.c]
+                        new[X + (ma-mi)* self.c]= Z
+                    nuevo.lista = new
+                    if coco:
+                        nuevo = nuevo.switch()
+                    return nuevo                    
+                else:
+                    print(' valores no permitidos')
+            else:   
+                print(' valores no permitidos')
+        else:
+            print(' valores no permitidos')
 
     def swap_cols(self,l,m) :
         
-        if l != m:
-            
-            if self.by_row:
-                nueva= self.switch()
-                cambiar= True
-            else:   
-                nueva = self.lista.copy() 
-                cambiar=False
-            
-            mi = min(l,m)
-            ma = max(l,m)
-            
-            new = nueva.copy()
-            for X in range( (mi-1)*self.r, (mi-1)* self.r + self.r ):
+        """
+       
+        Este metodo retorno una matriz seleccionada intercambiando  la columna j con la columna K que son valores  de entrada
+        
+        j   = columna  1 /// tipo int///  desde 1 hasta la cantidad de columnas n EXCLUSIVAMENTE
+
+        k   = columna 2   /// tipo int///   desde 1 hasta la cantidad de columnas n EXCLUSIVAMENTE     
+
+        j tiene que si o si ser diferente de k sino muestra un cartel de que no son valores adecuados            
                 
-                Z= new[X]
-                new[X]= new [ X + (ma-mi)* self.r]
-                new[X + (ma-mi)* self.r]= Z
-
-            print(new)
-            if cambiar:
-                return new.switch()
-            else:                    
-                return new
-    
+        En caso que algun valor de j o k no se encuentre en el rango adecuado de la matrix 
+        se muestra un error en el valor
+       
+        """
+        if type (l) == int and type (m) == int:
+            if  0 < l  <= self.c   and    0 < m  <=  self.c :
+                if l != m:
+                    nuevo, coco =  self . cambio_inicial(True)                
+                    new = nuevo . lista . copy() 
+                                        
+                    mi = min ( l , m )
+                    ma = max ( l , m )                    
+                    
+                    for X in range( (mi-1) * self.r  , (mi-1) * self.r + self.r ):                        
+                        Z = new [ X ]
+                        new [X] = new [ X + (ma-mi)* self.r]
+                        new [X + (ma-mi)* self.r]= Z
+                    nuevo.lista = new
+                    if coco:
+                        nuevo = nuevo.switch()
+                    return nuevo                    
+                else:
+                    print(' valores no permitidos')
+            else:   
+                print(' valores no permitidos')
+        else:
+            print(' valores no permitidos')
+   
     def scale_row(self,j,x):
+        """
+        Este metodo retorno una matriz seleccionada multiplocando la fila j con el valor  x que son valores  de entrada
         
-        if self.by_row == False:            
-            nueva= self.switch().lista
-            cambiar = True
-        else:   
-            nueva = self.lista.copy()  
-            cambiar=False
+        j   = fila  1 /// tipo int///  desde 1 hasta la cantidad de filas n EXCLUSIVAMENTE
+
+        x    /// tipo int o float///  cualquier valor dentro de esos tipos de variables EXCLUSIVAMENTE     
+               
+        En caso que algun valor de j o x no cumpla las condiciones adecuadas
+        se muestra un error en el valor
+       
+        """
 
 
+        if type(x) == float or type(x) == int:
+            if type (j) == int:
+                if  0 <  j  <= self.r:
+                    nuevo, coco =  self . cambio_inicial(True)                
+                    new = nuevo . lista . copy()                     
+                    for X in range( (j-1)*self.c , (j-1)* self.c + self.c ):
+                        new[X]= new[X] * x                    
+                    nuevo.lista = new
+                    
+                    if coco:
+                        nuevo = nuevo.switch()
+                    return nuevo
+                else:
+                    print(' valores no permitidos')
+            else:   
+                print(' valores no permitidos')
+        else:
+            print(' valores no permitidos')
 
-        new = nueva.copy()
-        for X in range( (j-1)*self.c , (j-1)* self.c + self.c ):
-            new[X]= new[X] * x
-        
-        self.lista = new
-        
-        if cambiar:           
-            print(self.switch().lista)
-            return self
-        else:                    
-            print(self.lista)
-            return self
-     
     def scale_col(self,k,y):
-        if self.by_row:            
-            nueva= self.switch().lista
-            cambiar = True
-        else:   
-            nueva = self.lista.copy()  
-            cambiar=False
+        """
+        Este metodo retorno una matriz seleccionada multiplocando la columna k con el valor  y que son valores  de entrada
+        
+        k   = columna  1 /// tipo int///  desde 1 hasta la cantidad de columnas n EXCLUSIVAMENTE
 
-        new = nueva.copy()
-        for X in range( (k-1)*self.r , (k-1)* self.r + self.r ):
-            new[X]= new[X] * y
-        
-        self.lista = new
-        
-        if cambiar:           
-            print(self.switch().lista)
-            return self
-        else:                    
-            print(self.lista)
-            return self
+        y   /// tipo int o float///  cualquier valor dentro de esos tipos de variables EXCLUSIVAMENTE     
+               
+        En caso que algun valor de k o y no cumpla las condiciones adecuadas
+        se muestra un error en el valor
+       
+        """
+                
+        if type(y) == float or type(y) == int:
+            if type (k) == int:
+                if  0 <  k  <= self.c:
+                    nuevo, coco =  self . cambio_inicial(False)                
+                    new = nuevo . lista . copy()                     
+                    for X in range( (k-1)*self.r , (k-1)* self.r + self.r  ):
+                        new[X]= new[X] * y                    
+                    nuevo.lista = new                    
+                    if coco:
+                        nuevo = nuevo.switch()
+                    return nuevo
+                else:
+                    print(' valores no permitidos')
+            else:   
+                print(' valores no permitidos')
+        else:
+            print(' valores no permitidos')
 
     def transpose(self) :
+        """
+        Este metodo retorna una matriz seleccionada traspuesta
+       
+        """
         z = self.r
         self.r = self.c
         self.c = z
@@ -268,82 +494,90 @@ class Myarray1():
             self.by_row= True
         else:   
             self.by_row = False
-        return self
+        nuevo= self.co_py()
+        return nuevo
     
     def flip_cols(self):        
-        if self.by_row:            
-            nueva= self.switch().lista
-            cambiar = True
-        else:   
-            nueva = self.lista.copy()  
-            cambiar=False
-
-        nueva.copy()
+        """
+        este metedo devuelve una copia del elemento de la clase,
+        
+        reflejado especularmente en sus columnas        
+        
+        """
+        nuevo, coco =  self . cambio_inicial(True)               
         new=[]
-        for X in range( len(nueva)- self.r , -1, - self.r ):            
-            for Y in range( X , X+ self.r):
-                
-                new.append(nueva[Y])
-        self.lista = new        
-        if cambiar:           
-            print(self.switch().lista)
-            return self
-        else:                    
-            print(self.lista)
-            return self
+        for X in range ( len(nuevo) - self.r  ,  -1   ,  - self.r ):            
+            for Y in range ( X  ,  X + self.r ):                
+                new . append ( nuevo [Y] )
+        nuevo . lista = new        
+        if coco:
+            nuevo = nuevo.switch()
+        return nuevo
     
     def flip_rows(self) :
-        if self.by_row == False:            
-            nueva= self.switch().lista
-            cambiar = True
-        else:   
-            nueva = self.lista.copy()  
-            cambiar=False
-        nueva.copy()
+        """
+        este metedo devuelve una copia del elemento de la clase,
+        
+        reflejado especularmente en sus filas        
+        
+        """
+        nuevo, coco =  self . cambio_inicial(True)
         new=[]
-        for X in range( len(nueva)- self.c , -1, - self.c ):            
+        for X in range( len(nuevo)- self.c , -1, - self.c ):            
             for Y in range( X , X+ self.c):
                 print(new)
-                new.append(nueva[Y])        
-        self.lista = new        
-        if cambiar:           
-            print(self.switch().lista)
-            return self
-        else:                    
-            print(self.lista)
-            return self
+                new.append(nuevo[Y])        
+        nuevo . lista = new        
+        if coco:
+            nuevo = nuevo.switch()
+        return nuevo
     
     def co_py(self):
+        """
+        Este metodo tiene simplemente la funcion de devolver una copia del mismo objeto de entrada
+
+        sin aplicar ningun cambio
+        
+        """
+        
         r1=self.r
         c1=self.c
         by_row1=self.by_row
         return Myarray1(self.lista.copy(),r1,c1,by_row1)
 
     def det(self):
+        """
+        este metodo devuelve el determinante de la matriz, si es cuadrada.
+
+        y lo calcula a traves del metodo de cofactores
+
+        utilizando recursion      
+        
+        """
         #siempre como TRUE        
         if self.r  != self.c :
-            pass
+            print ( 'IMPOSIBLE CALCULAR EL DETERMINANTE DE ESTA MATRIZ' )
         else:
-            if self.by_row == False:            
-                self.switch()
-            inicial = self.co_py()           
+            inicial, coco= self . cambio_inicial ( False )    
+
             if  self.r == 2 and self.c == 2:
-                #print("  ENTRO ENTRO ENTRO ENTRO ENTRO ENTRO")
-                fax= self.lista.copy()
-                total= fax [0]*fax[3]   -   fax [1]*fax[2]
-                print (total)
-                return total            
+                fax = self . lista . copy ()                
+                return fax [0] * fax [3] - fax [1] * fax [2]   
+                   
             else: 
-                final= []
-                for j in range(  0, inicial.r  ):                    
-                    listado = self.co_py()
-                    borrado = listado.del_col(j+1)
-                    llamada = borrado.del_row(1)
-                    final.append( ((-1)**(j))*(inicial.lista[j])*llamada.det())            
+                final = []
+                for j in range(  0, inicial.r  ):  
+
+                    mat_0 = self . co_py()                    
+                    mat_1 = mat_0 . del_col((j+1))                    
+                    mat_2 = mat_1 . del_row(1)
+
+                    final . append ( ((-1) **(j)) * (inicial . lista [j]) * mat_2.det() )            
             valor = 0
+                        
             for numero in final:
-                valor= valor + numero
-            print (valor)
+                valor = valor + numero
+            print ( valor )
             return valor
 
     def add(self,B):
@@ -475,6 +709,7 @@ class Myarray1():
                 print('NADA DE NADA ')
 
 call= False
+
 if call:
     A1 = Myarray1( [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20] , 10 , 2 , True)
     A2 = Myarray1( [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20] , 10 , 2 , True)
@@ -537,7 +772,28 @@ class Myarray2():
         self.r=r  
         self.c=c    
         self.by_row = by_row  # indica si la matriz fue cargada en orden columnas por columna False o fila por fila True
-      
+
+    def cambio_inicial2 ( self, okay ):
+        """
+        el fin de esta función es variar la forma de leer la matriz switcheandola
+
+        en algunos casos me es mas util tenerla de una forma y otras de otra
+
+        para ver de que forma quiero esa matriz existe el parametro de entrada okay
+
+        OKAY siempre tiene que ser de  ///TIPO BOOL///
+
+
+        """
+        
+        if self.by_row == okay:            
+            nuevo= self.switch()
+            cambiar = True
+        else:   
+            nuevo = self.co_py()  
+            cambiar=False
+        return nuevo,cambiar
+
     def get_pos2(self,j,k):
         if self.by_row:
             return (j-1)*self.c+(k-1)
@@ -623,13 +879,10 @@ class Myarray2():
 
     def swap_rows2(self,j,k):
        
-        if j != k:            
-            if  self.by_row == False:
-                nueva  =  self.switch()
-                cambiar  =  True
-            else:   
-                nueva =  self . co_py2()  
-                cambiar  = False 
+        if j != k:  
+
+            nueva, coco= self.cambio_inicial2(False)          
+            
             mi = min ( j , k  )
             ma = max (j , k )
             new = nueva . lista . copy ()
@@ -646,12 +899,7 @@ class Myarray2():
     def swap_cols2(self,l,m) :
         
         if l != m:
-            if self.by_row:
-                nueva= self.switch()
-                cambiar = True
-            else:   
-                nueva = self.co_py2()  
-                cambiar=False 
+            nueva, cambiar= self.cambio_inicial(True)
             mi = min(l,m)
             ma = max(l,m)
             new = nueva.lista.copy()
@@ -768,8 +1016,7 @@ class Myarray2():
             inicial = nueva.lista.copy()   
             if  len(inicial) == 2 :                  
                 return inicial [0][0]*inicial[1][1]   -  inicial [1][0] * inicial[0][1]
-            
-                     
+                  
             else: 
                 final= []                
                 for j in range(0, len(inicial)):                    
@@ -944,23 +1191,32 @@ class Myarray2():
                 print(self.ident().lista)
             else:
                 print('NADA DE NADA ')
-  
-Masti1=  Myarray2( [[1,2],[3,4]], 2 , 2 , True)
-bueno23 = Myarray2( [[1,2,3,8],[4,5,6,10],[7,11,9,12],[8,10,12,25]] , 4 , 4 , True)
 
-bueno44 = Myarray2( [[1,2,3],[4,5,6],[7,11,9]] , 3 , 3 , True)
+if call:  
+    Masti1=  Myarray2( [[1,2],[3,4]], 2 , 2 , True)
+    bueno23 = Myarray2( [[1,2,3,8],[4,5,6,10],[7,11,9,12],[8,10,12,25]] , 4 , 4 , True)
 
-bueno_false44 = Myarray2( [[1,4],[2,5],[3,6]] , 3 , 2 , True)
+    bueno44 = Myarray2( [[1,2,3],[4,5,6],[7,11,9]] , 3 , 3 , True)
 
-bueno_false55 = Myarray2( [[1,4],[2,5],[3,6]] , 2 , 3 , False)
+    bueno_false44 = Myarray2( [[1,4],[2,5],[3,6]] , 3 , 2 , True)
+
+    bueno_false55 = Myarray2( [[1,4],[2,5],[3,6]] , 2 , 3 , False)
 
 
-#Masti1.switch()
+    #Masti1.switch()
 
-#bueno23.det2()
+    #bueno23.det2()
 
-#bueno44.rprod2(bueno_false44)
+    #bueno44.rprod2(bueno_false44)
 
-#bueno_false44.lprod2(bueno44)
+    #bueno_false44.lprod2(bueno44)
 
-bueno23.ident2()
+    #bueno23.ident2()
+
+Masti555 =  Myarray1( [1,2,3,4] , 2 , 2 , True)
+bueno888 = Myarray1( [1,2,3,8,4,5,6,10,7,11,9,12,8,10,12,25] , 4 , 4 , True)
+bueno999= Myarray1( [1,4,7,8,2,5,11,10,3,6,9,12,8,10,12,25] , 4 , 4 , False)
+
+
+
+print(bueno999.swap_rows(2,7).lista)
